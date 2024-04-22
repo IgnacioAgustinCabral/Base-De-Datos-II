@@ -1,4 +1,4 @@
-/*1- Listar los cÛdigos y descripciones de todos los productos
+/*1- Listar los cÔøΩdigos y descripciones de todos los productos
 (Ayuda: Production.Product)*/
 SELECT p.ProductID,
        pd.Description
@@ -6,7 +6,7 @@ FROM Production.Product p
 INNER JOIN Production.ProductDescription pd ON p.ProductID = pd.ProductDescriptionID;
 
 
-/*2- Listar los datos de la subcategorÌa n˙mero 17 (Ayuda:
+/*2- Listar los datos de la subcategorÔøΩa nÔøΩmero 17 (Ayuda:
 Production.ProductSubCategory)*/
 SELECT *
 FROM Production.ProductSubcategory ps
@@ -14,16 +14,16 @@ INNER JOIN Production.Product p ON p.ProductSubcategoryID = ps.ProductSubcategor
 WHERE ps.ProductSubcategoryID = 17;
 
 
-/*3-Listar los productos cuya descripciÛn comience con D (Ayuda:
-like ëD%í)*/
+/*3-Listar los productos cuya descripciÔøΩn comience con D (Ayuda:
+like ÔøΩD%ÔøΩ)*/
 SELECT pd.Description
 FROM Production.Product p
 INNER JOIN Production.ProductDescription pd ON p.ProductID = pd.ProductDescriptionID
 WHERE pd.Description LIKE 'D%';
 
 
-/*4- Listar las descripciones de los productos cuyo n˙mero finalice
-con 8 (Ayuda: ProductNumber like ë%8í)*/
+/*4- Listar las descripciones de los productos cuyo nÔøΩmero finalice
+con 8 (Ayuda: ProductNumber like ÔøΩ%8ÔøΩ)*/
 SELECT p.ProductNumber,
        pd.Description
 FROM Production.Product p
@@ -32,14 +32,14 @@ WHERE p.ProductNumber LIKE '%8';
 
 
 /*5- Listar aquellos productos que posean un color asignado. Se
-deber·n excluir todos aquellos que no posean ning˙n valor
+deberÔøΩn excluir todos aquellos que no posean ningÔøΩn valor
 (Ayuda: is not null)*/
 SELECT *
 FROM Production.Product p
 WHERE p.Color IS NOT NULL;
 
 
-/*6- Listar el cÛdigo y descripciÛn de los productos de color Black
+/*6- Listar el cÔøΩdigo y descripciÔøΩn de los productos de color Black
 (Negro) y que posean el nivel de stock en 500. (Ayuda:
 SafetyStockLevel = 500)*/
 SELECT p.ProductID,
@@ -50,7 +50,7 @@ WHERE p.Color = 'Black'
   AND p.SafetyStockLevel = 500;
 
 
-/*7- Listar los productos que sean de color Black (Negro) Û Silver
+/*7- Listar los productos que sean de color Black (Negro) ÔøΩ Silver
 (Plateado).*/
 SELECT *
 FROM Production.Product p
@@ -59,7 +59,114 @@ WHERE p.Color = 'Black'
 
 
 /*8- Listar los diferentes colores que posean asignados los
-productos. SÛlo se deben listar los colores. (Ayuda: distinct)*/
+productos. SÔøΩlo se deben listar los colores. (Ayuda: distinct)*/
 SELECT DISTINCT(p.Color)
 FROM Production.Product p
 WHERE p.Color IS NOT NULL;
+
+
+/*9- Contar la cantidad de categor√≠as que se encuentren cargadas
+en la base. (Ayuda: count)*/
+SELECT COUNT(*)
+FROM Production.ProductCategory pc;
+
+
+/*10- Contar la cantidad de subcategor√≠as que posee asignada la
+categor√≠a 2.*/
+SELECT COUNT(*)
+FROM Production.ProductSubcategory ps 
+WHERE ps.ProductCategoryID = 2;
+
+
+/*11- Listar la cantidad de productos que existan por cada uno de los
+colores.*/
+SELECT p.Color , COUNT(*) AS Cantidad
+FROM Production.Product p 
+WHERE p.Color IS NOT NULL
+GROUP BY p.Color
+ORDER BY Cantidad DESC;
+
+
+/*12- Sumar todos los niveles de stocks aceptables que deben existir
+para los productos con color Black. (Ayuda: sum)*/
+SELECT SUM(p.SafetyStockLevel) AS Suma_Nivel_Stock_Aceptable
+FROM Production.Product p 
+WHERE p.Color = 'Black';
+
+
+/*13- Calcular el promedio de stock que se debe tener de todos los
+productos cuyo c√≥digo se encuentre entre el 316 y 320.
+(Ayuda: avg)*/
+SELECT AVG(p.SafetyStockLevel) AS Promedio_De_Stock
+FROM Production.Product p 
+WHERE p.ProductID BETWEEN 316 AND 320;
+
+
+/*14- Listar el nombre del producto y descripci√≥n de la subcategor√≠a
+que posea asignada. (Ayuda: inner join)*/
+SELECT p.Name as Nombre_Producto , ps.Name AS Descripcion_Subcategoria
+FROM Production.Product p 
+INNER JOIN Production.ProductSubcategory ps 
+ON p.ProductSubcategoryID  = ps.ProductSubcategoryID; 
+
+
+/*15- Listar todas las categor√≠as que poseen asignado al menos una
+subcategor√≠a. Se deber√°n excluir aquellas que no posean
+ninguna.*/
+SELECT pc.Name , COUNT(*) AS Cantidad_Subcategorias_Asignadas
+FROM Production.ProductCategory pc 
+INNER JOIN Production.ProductSubcategory ps 
+ON pc.ProductCategoryID  = ps.ProductCategoryID
+GROUP BY pc.Name 
+HAVING COUNT(*) > 1
+ORDER BY Cantidad_Subcategorias_Asignadas DESC;
+
+
+/*16- Listar el c√≥digo y descripci√≥n de los productos que posean fotos
+asignadas. (Ayuda: Production.ProductPhoto)*/
+SELECT p.ProductID , p.Name 
+FROM Production.Product p 
+INNER JOIN Production.ProductProductPhoto ppp 
+ON p.ProductID = ppp.ProductID;
+
+
+/*17- Listar la cantidad de productos que existan por cada una de las
+Clases (Ayuda: campo Class)*/
+SELECT p.Class ,COUNT(*) AS Cantidad
+FROM Production.Product p
+WHERE p.Class IS NOT NULL
+GROUP BY p.Class;
+
+
+/*18- Listar la descripci√≥n de los productos y su respectivo color. S√≥lo
+nos interesa caracterizar al color con los valores: Black, Silver
+u Otro. Por lo cual si no es ni silver ni black se debe indicar
+Otro. (Ayuda: utilizar case).*/
+SELECT p.Name ,
+CASE 
+	WHEN p.Color = 'Black' THEN 'Black'
+	WHEN p.Color = 'Silver' THEN 'Silver'
+	ELSE 'Otro'
+END AS Color
+FROM Production.Product p;
+
+
+/*19- Listar el nombre de la categor√≠a, el nombre de la subcategor√≠a
+y la descripci√≥n del producto. (Ayuda: join)*/
+SELECT pc.Name AS Categoria, ps.Name AS Subcategoria, p.Name AS Producto, pd.Description AS Descripcion
+FROM Production.Product p 
+INNER JOIN Production.ProductSubcategory ps 
+ON p.ProductSubcategoryID = ps.ProductSubcategoryID 
+INNER JOIN Production.ProductCategory pc 
+ON pc.ProductCategoryID = ps.ProductCategoryID
+INNER JOIN Production.ProductModelProductDescriptionCulture pmpdc 
+ON p.ProductModelID = pmpdc.ProductModelID 
+INNER JOIN Production.ProductDescription pd 
+ON pmpdc.ProductDescriptionID = pd.ProductDescriptionID;
+
+
+/*20- Listar la cantidad de subcategor√≠as que posean asignado los
+productos. (Ayuda: distinct).*/
+SELECT COUNT(DISTINCT ProductSubcategoryID) AS CantidadSubcategorias
+FROM Production.Product;
+
